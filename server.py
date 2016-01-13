@@ -1,7 +1,7 @@
 #  coding: utf-8 
 import SocketServer
 
-# Copyright 2013 Abram Hindle, Eddie Antonio Santos
+# Copyright 2013 Abram Hindle, Eddie Antonio Santos, Xiaohui Ma
 # 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,11 +28,47 @@ import SocketServer
 
 
 class MyWebServer(SocketServer.BaseRequestHandler):
+
+    def _gen_response(self, request):
+        
+        # get the complete file directory
+        request_file = request.split( )[1]
+        if request_file == "/":
+            request_file = "/index.html"
+        request_file = "www" + request_file
+        
+        # add the http version to header, eg: "HTTP/1.1"
+        header = request.split( )[2]
+        
+        # load the requested file
+        try:
+            f = open(request_file,'r')
+            r = f.read()
+            f.close()
+            # add the 200 status code
+            header += " 200 OK\n"
+            
+            if request_file.endswith(".css"):
+                header += "Content-Type: text/css\n"
+            
+        except Exception as e:
+            print ("[Warning!] File not found. Respond with 404 page.\n")
+            r = "<html><body><p>Error 404: File not found</p></body></html>"
+            # add the 404 status code
+            header += " 404 Not Found\n"
+
+        # end the header with two new lines and merge header with content
+        header += "Connection: close\n\n"
+        r = header + r
+        
+        return r
     
     def handle(self):
+        
         self.data = self.request.recv(1024).strip()
-        print ("Got a request of: %s\n" % self.data)
-        self.request.sendall("OK")
+        if self.data != "":
+            print ("Got a request of: %s\n" % self.data)
+            self.request.sendall(self._gen_response(self.data))
 
 if __name__ == "__main__":
     HOST, PORT = "localhost", 8080
