@@ -1,9 +1,9 @@
 ....
 ----------------------------------------------------------------------
-Ran 4 tests in 0.011s
+Ran 4 tests in 0.012s
 
 OK
-...F..F
+...F...
 ======================================================================
 FAIL: test_get_group (__main__.TestYourWebserver)
 how secure are you?
@@ -13,15 +13,7 @@ Traceback (most recent call last):
     self.assertTrue( False, "Should have thrown an HTTP Error! [%d]" % req.getcode())
 AssertionError: Should have thrown an HTTP Error! [200]
 
-======================================================================
-FAIL: test_html (__main__.TestYourWebserver)
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "not-free-tests.py", line 75, in test_html
-    self.assertTrue( req.info().gettype() == "text/html", ("Bad mimetype for html! %s" % req.info().gettype()))
-AssertionError: Bad mimetype for html! text/plain
+Ran 7 tests in 0.015s
 
-----------------------------------------------------------------------
-Ran 7 tests in 0.014s
-
-FAILED (failures=2)
+FAILED (failures=1)

@@ -50,6 +50,8 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 
             if request_file.endswith(".css"):
                 header += "Content-Type: text/css\n"
+            elif request_file.endswith(".html"):
+                header += "Content-Type: text/html\n"
 
         except Exception as e:
             print ("[Warning!] File not found. Respond with 404 page.\n")
