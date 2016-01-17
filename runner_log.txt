@@ -1,19 +1,10 @@
 ....
 ----------------------------------------------------------------------
-Ran 4 tests in 0.012s
+Ran 4 tests in 0.021s
 
 OK
-...F...
-======================================================================
-FAIL: test_get_group (__main__.TestYourWebserver)
-how secure are you?
+.......
 ----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "not-free-tests.py", line 59, in test_get_group
-    self.assertTrue( False, "Should have thrown an HTTP Error! [%d]" % req.getcode())
-AssertionError: Should have thrown an HTTP Error! [200]
+Ran 7 tests in 0.014s
 
-----------------------------------------------------------------------
-Ran 7 tests in 0.015s
-
-FAILED (failures=1)
+OK

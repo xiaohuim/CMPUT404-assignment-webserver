@@ -1,5 +1,5 @@
 #  coding: utf-8
-import SocketServer
+import SocketServer, os, mimetypes
 
 # Copyright 2013 Abram Hindle, Eddie Antonio Santos, Xiaohui Ma
 #
@@ -31,36 +31,43 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 
     def _gen_response(self, request):
 
-        # get the complete file directory
-        request_file = request.split( )[1]
-        if request_file.endswith("/"):
-            request_file += "index.html"
-        request_file = "www" + request_file
-
         # add the http version to header, eg: "HTTP/1.1"
         header = request.split( )[2]
 
-        # load the requested file
+        # get the file directory from request and add 'www'
+        request_file = request.split( )[1]
+        request_file = "www" + request_file
+
+        # get the resolved relative path using the os library
+        request_file = os.path.relpath(os.path.abspath(request_file))
+
+        # check if the path is within 'www' folder
+        if not request_file.startswith("www"):
+            # return 404 response if check fails
+            header += " 404 Not Found\r\nConnection: close\r\n\r\n"
+            r = "<html><body><p>Error 404: File not found</p></body></html>"
+            return header+r
+
+        # check if the path is a directory
+        if os.path.isdir(request_file):
+            request_file += "/index.html"
+
+        # open the requested file
         try:
             f = open(request_file,'r')
             r = f.read()
             f.close()
-            # add the 200 status code
-            header += " 200 OK\n"
+            # add the 200 status code and the mimetype
+            header += " 200 OK\r\nContent-Type: "
+            header += mimetypes.guess_type(request_file)[0] + "\r\n"
 
-            if request_file.endswith(".css"):
-                header += "Content-Type: text/css\n"
-            elif request_file.endswith(".html"):
-                header += "Content-Type: text/html\n"
-
-        except Exception as e:
-            print ("[Warning!] File not found. Respond with 404 page.\n")
+        except IOError:
             r = "<html><body><p>Error 404: File not found</p></body></html>"
             # add the 404 status code
-            header += " 404 Not Found\n"
+            header += " 404 Not Found\r\n"
 
         # end the header with two new lines and merge header with content
-        header += "Connection: close\n\n"
+        header += "Connection: close\r\n\r\n"
         r = header + r
 
         return r
