@@ -50,7 +50,10 @@ class MyWebServer(SocketServer.BaseRequestHandler):
 
         # check if the path is a directory
         if os.path.isdir(request_file):
-            request_file += "/index.html"
+            # redirect to "./index.html"
+            header += " 301 Moved Permanently\r\n"
+            header += "Location: " + request_file[3:] + "/index.html\r\n"
+            return header
 
         # open the requested file
         try:
